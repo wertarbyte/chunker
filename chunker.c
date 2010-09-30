@@ -7,11 +7,12 @@ int main(int argc, char *argv[]) {
         return 2;
     }
     
-    long int chunk_size = strtol(argv[1], NULL, 10);
+    // how big are the chunks?
+    long unsigned int chunk_size = strtoul(argv[1], NULL, 10);
+    // how much data is (possibly) left to process?
+    long unsigned int left = chunk_size;
     
     int returncode = 0;
-
-    long int left = chunk_size;
 
     int buffer_size = 8;
     void *buffer = malloc( buffer_size );
