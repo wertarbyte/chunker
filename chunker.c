@@ -5,6 +5,8 @@
 #define EC_LIMIT_REACHED 0
 #define EC_ERROR 2
 
+#define BUFFER_SIZE 1024
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         fprintf(stderr, "No chunk size given!\n");
@@ -17,16 +19,17 @@ int main(int argc, char *argv[]) {
     long unsigned int left = chunk_size;
     
     int returncode = EC_LIMIT_REACHED;
-
-    int buffer_size = 8;
-    void *buffer = malloc( buffer_size );
+    
+    // allocate an input buffer
+    void *buffer = malloc( BUFFER_SIZE );
     
     int readBytes = 0;
     while (left > 0) {
-        int toread = buffer_size < left ? buffer_size : left;
-        // fprintf(stderr, "%d bytes left\n", left);
+        /* how many bytes can we read? We cannot read more than
+         * our buffer can handle or our limit allows.
+         */
+        int toread = BUFFER_SIZE < left ? BUFFER_SIZE : left;
         readBytes = read( 0, buffer, toread );
-        // fprintf(stderr, "Read %d bytes\n", readBytes);
         if (readBytes == 0) {
             returncode = EC_EOF_REACHED;
             break;
