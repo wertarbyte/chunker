@@ -1,0 +1,29 @@
+chunker - split streams into handy chunks
+
+by Stefan Tomanek <stefan.tomanek@wertarbyte.de>
+
+http://github.com/wertarbyte/chunker
+
+The program chunker reads a specified amount of data from STDIN and
+writes it to STDOUT. Its exit code indicates whether the end of
+input data has been reached (code 1) or whether the specified limit
+has been reached (code 0) and more data is waiting.
+
+The program can be used to split data coming from a pipe and
+redirect it to different output pipes.
+
+This example reads from STDIN and calls ftpupload for every 500 MB
+it reads. It then checks chunker's exit code if there is more data
+waiting, repeating the process until no more data is arriving at
+STDIN.
+
+#!/bin/bash
+# 500 MB
+CHUNKSIZE=$((1024*1024*500))
+MORE=1
+while [ "$MORE" -eq 0 ]; do
+    chunker "$CHUNKSIZE" | \
+        ftpupload -
+    # get exit status of chunker
+    MORE="${PIPESTATUS[0]}"
+done
